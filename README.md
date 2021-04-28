@@ -11,10 +11,10 @@
  * 下一步将支持功能
     >* 生成HTML报告
     >    类似我开发的自动化测试平台的这种HTML报告
-    >    ![](https://github.com/hotswwkyo/unittest_seven_helper/blob/master/img/htmlreport.png)
+    >    ![](https://github.com/hotswwkyo/unittest_seven_helper/blob/main/img/htmlreport.png)
 
  * email：hotswwkyo@qq.com
- 
+
 ## 安装
 
 pip方式安装
@@ -212,7 +212,7 @@ pip方式安装
     >- 第二行: 用例数据标题
     >- 第三行 开始 每一行都是一组完整的测试数据直至遇见空行或者下一个数据块
 
-    >![](https://github.com/hotswwkyo/unittest_seven_helper/blob/master/img/testcase_data_excel_file.png)
+    >![](https://github.com/hotswwkyo/unittest_seven_helper/blob/main/img/testcase_data_excel_file.png)
 
 * kwargs变长关键字参数接收参数:
     >- data_file_name - 数据文件名称
@@ -222,7 +222,7 @@ pip方式安装
 * 返回值
     测试数据行信息字典构成的一维列表, 如：
     > [{"减数1": "36", "减数2": "10", "预期": "26"}, {"减数1": "57", "减数2": "30", "预期": "27"}]
-    >![](https://github.com/hotswwkyo/unittest_seven_helper/blob/master/img/testcase_data_excel_file.png)
+    >![](https://github.com/hotswwkyo/unittest_seven_helper/blob/main/img/testcase_data_excel_file.png)
 
 * 使用
     框架是默认启用内置的数据提供者（SevenDataProvider）所以不需要做任何设置，返回值是测试数据行信息字典构成的一维列表，所以测试方法统一接收一个参数化参数
@@ -237,7 +237,7 @@ pip方式安装
     - 数据文件名
         通过测试方法装饰器Test参数data_provider_kwargs传入data_file_name，如果没有传入，则取测试方法所属的测试类名作为测试数据文件名称
         > data_provider_kwargs={'data_file_name':'mytest'}
-    
+
 * 示例
 ```python
 class CalculationTest(AbstractTestCase):
@@ -251,25 +251,25 @@ class CalculationTest(AbstractTestCase):
         @testcase(priority=4, enabled=True, author='思文伟', data_provider_kwargs={'data_file_dir_path':'E:\\alltest'}, description='整数减法测试02')
         def integer_subtraction_02(self, testdata):
             """使用内置的数据提供者 - 传入测试数据文件所在的目录路径"""
-            
+
             number_1 = testdata.get("减数1")
             number_2 = testdata.get("减数2")
             expected = testdata.get("预期")
-            
+
             result = int(number_1) - int(number_2)
             self.assertEqual(result, int(expected))
-            
+
         @testcase(priority=5, enabled=True, author='思文伟', description='整数减法测试03')
         def integer_subtraction_03(self,testdata):
-            """使用内置的数据提供者 - 不传入测试数据文件所在的目录路径, 
+            """使用内置的数据提供者 - 不传入测试数据文件所在的目录路径,
             则会检测GLOBAL_CONFIG.seven_data_provider_data_file_dir 是否设置
             ，没有设置则会使用该方法所属的测试类所在的模块目录路径作为测试数据文件的查找目录
             """
-            
+
             number_1 = testdata.get("减数1")
             number_2 = testdata.get("减数2")
             expected = testdata.get("预期")
-            
+
             result = int(number_1) - int(number_2)
             self.assertEqual(result, int(expected))
 
@@ -403,8 +403,8 @@ class CalculationTest(AbstractTestCase):
                         datasets.append(line)
                     break
             return datasets
-    
-    
+
+
     class CalculationTest(AbstractTestCase):
         @classmethod
         def setUpClass(cls):
@@ -420,7 +420,7 @@ class CalculationTest(AbstractTestCase):
             number_1 = testdata.get("加数1")
             number_2 = testdata.get("加数2")
             expected = testdata.get("预期")
-            
+
             result = number_1 + number_2
             self.assertEqual(result, expected)
 
@@ -435,7 +435,7 @@ class CalculationTest(AbstractTestCase):
         CalculationTest.run_test()
 
     ```
-    
+
     > 非AbsractDataProvider子类数据提供者示例
     ```python
     #!/usr/bin/env python
