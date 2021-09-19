@@ -301,6 +301,8 @@ class Test(object):
                             pass
                     else:
                         raise ValueError(msg)
+            if method_instance:
+                method_instance.set_testcase_runtime_datas(new_args, kwargs)
             return func(*tuple(new_args), **kwargs)
 
         return _call

@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='UTF-8') as f:
 
 setuptools.setup(
     name="unittest_seven_helper",
-    version="1.0.0",
+    version="2.0.0",
     author="思文伟",
     author_email="hotswwkyo@qq.com",
     description="unittest测试增强库，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段",
@@ -25,6 +25,6 @@ setuptools.setup(
     ],
     python_requires='>=3',
     package_data={
-        "unittest_seven_helper": ["samples/*.xlsx"],
+        "unittest_seven_helper": ["samples/*.xlsx", "report/resources/*.*"],
     },
 )

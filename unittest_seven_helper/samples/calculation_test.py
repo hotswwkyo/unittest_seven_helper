@@ -5,8 +5,8 @@
 @Date: 2021/03/30 15:49:32
 '''
 import os
-
-from unittest_seven_helper import GLOBAL_CONFIG
+import unittest_seven_helper
+# from unittest_seven_helper import GLOBAL_CONFIG
 from unittest_seven_helper import AbstractTestCase
 from unittest_seven_helper import Test as testcase
 
@@ -97,6 +97,10 @@ class CalculationTest(AbstractTestCase):
         result = int(number_1) - int(number_2)
         self.assertEqual(result, int(expected))
 
+    def test_login_baidu(self):
+
+        print("yes")
+
     def tearDown(self):
         pass
 
@@ -106,4 +110,5 @@ class CalculationTest(AbstractTestCase):
 
 
 if __name__ == '__main__':
-    CalculationTest.run_test()
+    # CalculationTest.run_test()
+    unittest_seven_helper.main()

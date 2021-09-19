@@ -1,5 +1,5 @@
 # unittest_seven_helper
- unittest测试增强库，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
+ 基于unittest测试框架，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
  * 现已支持的功能
     >* 支持命名测试方法且不与方法的doc string（文档字符串）冲突
     >* 支持设置测试方法编写人，修改人，最后修改人以及最后一次修改时间等额外记录信息
@@ -7,13 +7,9 @@
     >* 支持参数化功能
     >* 支持数据驱动测试
     >* 内置参数化数据存取方案(使用excel（xlsx或xls格式）存取和管理维护参数化测试数据，简洁直观，易于修改维护)
-
- * 下一步将支持功能
-    >* 生成HTML报告
-    >    类似我开发的自动化测试平台的这种HTML报告
+    >* 支持生成更加简洁美观且可作为独立文件发送的HTML测试报告
     >    ![](https://github.com/hotswwkyo/unittest_seven_helper/blob/main/img/htmlreport.png)
 
- * email：hotswwkyo@qq.com
 
 ## 安装
 
@@ -22,6 +18,41 @@ pip方式安装
 
 源码方式安装(注意以管理员方式执行)
 > python setup.py install
+
+## 执行测试
+命令行执行
+python -m unittest_seven_helper -v -html D:\temp\tms_apitest.html calculation_test.py
+
+查看命令行参数
+python -m unittest_seven_helper -h
+
+代码中调unittest_seven_helper.main()执行
+
+    ```python
+    #!/usr/bin/env python
+    # -*- encoding: utf-8 -*-
+
+    import unittest_seven_helper
+    from unittest_seven_helper import AbstractTestCase
+    from unittest_seven_helper import Test as testcase
+
+
+    def get_testdatas(test_class_name, test_method_name, *args, **kwargs):
+
+        return [[1,2,3], [3,4,7]]
+
+
+    class Demo1Test(AbstractTestCase):
+
+        @testcase(priority=1, enabled=True, data_provider=get_testdatas, author='思文伟', description='两数加法测试01')
+        def integer_addition_02(self, number_1, number_2, expected):
+
+            result = number_1 + number_2
+            self.assertEqual(result, expected)
+    if __name__ == '__main__':
+        # Demo1Test.run_test()
+        unittest_seven_helper.main()
+    ```
 
 ## 快速开始
 

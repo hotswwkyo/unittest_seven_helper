@@ -16,6 +16,7 @@ class AbstractTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest', serial_number=1):
         super(AbstractTestCase, self).__init__(methodName)
         self._serial_number = serial_number
+        self.__testcase_runtime_datas = dict(args=[], kwargs={})
 
     @classmethod
     def sleep(cls, seconds):
@@ -23,14 +24,33 @@ class AbstractTestCase(unittest.TestCase):
         time.sleep(seconds)
         return cls
 
+    def strclass(self):
+        return strclass(self.__class__)
+
     @property
     def test_method_obj(self):
         return getattr(self, self._testMethodName)
 
     @property
+    def real_test_method_name(self):
+        return self._testMethodName
+
+    @property
     def _test_method_name(self):
 
         return "{}_{}".format(self._testMethodName, self._serial_number)
+
+    def set_testcase_runtime_datas(self, args=[], kwargs={}):
+
+        self.__testcase_runtime_datas["args"] = args
+        self.__testcase_runtime_datas["kwargs"] = kwargs
+
+    def get_testcase_runtime_datas(self):
+        return self.__testcase_runtime_datas
+
+    def shortDescription(self):
+        name = Test.get_test_marker(self.test_method_obj, key=Test.DESCRIPTION, default_value=None)
+        return name or None
 
     def id(self):
         return "{}.{}".format(strclass(self.__class__), self._test_method_name)
@@ -77,7 +97,8 @@ class AbstractTestCase(unittest.TestCase):
         return suite
 
     @classmethod
-    def run_test(cls):
+    def run_test(cls, **kwargs):
 
-        runner = unittest.TextTestRunner()
-        return runner.run(cls.build_self_suite())
+        from unittest_seven_helper.main import main
+        task = main(**kwargs)
+        return task.result

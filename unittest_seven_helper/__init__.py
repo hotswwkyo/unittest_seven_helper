@@ -129,8 +129,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__all__ = ['Test', 'GLOBAL_CONFIG', 'AbstractTestCase', 'AbsractDataProvider']
+__all__ = ['Test', 'GLOBAL_CONFIG', 'AbstractTestCase', 'AbsractDataProvider', 'main']
 
+from .main import main
 from .test_wrapper import Test
 from .global_config import GLOBAL_CONFIG
 from .abstract_testcase import AbstractTestCase
