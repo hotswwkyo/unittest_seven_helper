@@ -1,5 +1,5 @@
 # unittest_seven_helper
- 基于unittest测试框架，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
+ 基于unittest的测试框架，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
  * 现已支持的功能
     >* 支持命名测试方法且不与方法的doc string（文档字符串）冲突
     >* 支持设置测试方法编写人，修改人，最后修改人以及最后一次修改时间等额外记录信息
@@ -21,10 +21,10 @@ pip方式安装
 
 ## 执行测试
 命令行执行
-python -m unittest_seven_helper -v -html D:\temp\tms_apitest.html calculation_test.py
+> python -m unittest_seven_helper -v -html D:\temp\tms_apitest.html calculation_test.py
 
 查看命令行参数
-python -m unittest_seven_helper -h
+> python -m unittest_seven_helper -h
 
 代码中调unittest_seven_helper.main()执行
 
