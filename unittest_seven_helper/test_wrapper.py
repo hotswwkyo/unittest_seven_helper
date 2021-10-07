@@ -21,7 +21,9 @@ class Test(object):
         settings: 设置项, 键定义如下
             author: 用例编写者
             editors: 修改者列表
-            groups: 方法所属的组的列表  --- 该功能暂未实现
+            dname: 用于给用例起一个用于设置依赖的名称
+            depends: 用于设置用例依赖，是一个用例依赖列表
+            groups: 方法所属的组的列表
             enabled: 是否启用执行该测试方法
             priority: 测试方法的执行优先级，数值越小执行越靠前
             alway_run: 如果设置为true，则此测试方法将始终运行，即使它依赖于失败的方法也是如此 --- 该功能暂未实现
@@ -47,8 +49,6 @@ class Test(object):
             last_modifyied_by: 最后修改者
             last_modified_time: 最后一次修改的时间
             enable_default_data_provider: 是否使用内置数据提供者(SevenDataProvider)，未设置data_provider，且该值为True 才会使用内置数据提供者(SevenDataProvider)
-            depends_on_groups: 此方法所依赖的组列表  --- 该功能暂未实现
-            depends_on_methods: 此方法所依赖的方法列表  --- 该功能暂未实现
     """
 
     # 添加到测试方法的属性名
@@ -58,6 +58,8 @@ class Test(object):
 
     # TEST_MARKER键名
     AUTHOR = 'author'
+    DNAME = 'dname'  # 该键名用于给用例起一个用于设置依赖的名称
+    DEPENDS = 'depends'  # 该键名用于设置用例依赖，是一个用例依赖列表
     EDITORS = 'editors'
     GROUPS = 'groups'
     ENABLED = 'enabled'
@@ -70,8 +72,6 @@ class Test(object):
     DATA_PROVIDER = 'data_provider'
     DATA_PROVIDER_ARGS = 'data_provider_args'
     DATA_PROVIDER_KWARGS = 'data_provider_kwargs'
-    DEPENDS_ON_GROUPS = 'depends_on_groups'
-    DEPENDS_ON_METHODS = 'depends_on_methods'
     LAST_MODIFYIED_BY = 'last_modifyied_by'
     LAST_MODIFYIED_TIME = 'last_modified_time'
     ENABLE_DEFAULT_DATA_PROVIDER = 'enable_default_data_provider'
@@ -88,6 +88,8 @@ class Test(object):
     # 默认配置
     DEFAULT_SETTTINGS = {
         GROUPS: [],
+        DNAME: "",
+        DEPENDS: [],
         ENABLED: True,
         PRIORITY: 1,
         ALWAY_RUN: False,
@@ -98,8 +100,6 @@ class Test(object):
         DATA_PROVIDER: None,
         DATA_PROVIDER_ARGS: (),
         DATA_PROVIDER_KWARGS: {},
-        DEPENDS_ON_GROUPS: [],
-        DEPENDS_ON_METHODS: [],
         AUTHOR: '',
         EDITORS: [],
         LAST_MODIFYIED_BY: '',
@@ -369,7 +369,7 @@ class Test(object):
         Returns: 返回整个测试标记配置 或配置中指定项的值
         """
 
-        test_marker = getattr(test_func_obj, cls.TEST_MARKER)
+        test_marker = getattr(test_func_obj, cls.TEST_MARKER, {})
         if key and isinstance(key, str):
             return test_marker.get(key, default_value)
         else:

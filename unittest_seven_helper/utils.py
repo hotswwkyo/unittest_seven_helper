@@ -19,6 +19,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
+def strclass(cls):
+
+    module = inspect.getmodule(cls)
+    mfile = inspect.getabsfile(module)
+    name = inspect.getmodulename(mfile)
+    return "%s.%s" % (name, cls.__qualname__)
+
+
 def ignore_unused(*objs):
     return objs
 

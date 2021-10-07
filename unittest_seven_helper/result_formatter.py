@@ -6,7 +6,7 @@
 '''
 import copy
 import json
-from unittest.util import strclass
+from .utils import strclass
 from .test_wrapper import Test
 from .abstract_testcase import AbstractTestCase
 from .attrs_manager import AttributeManager

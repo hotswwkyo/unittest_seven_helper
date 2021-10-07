@@ -4,10 +4,11 @@
 @Author: 思文伟
 @Date: 2021/03/30 11:21:57
 '''
+import sys
 import time
 import inspect
 import unittest
-from unittest.util import strclass
+from .utils import strclass
 from .test_wrapper import Test
 
 
@@ -28,12 +29,21 @@ class AbstractTestCase(unittest.TestCase):
         return strclass(self.__class__)
 
     @property
+    def serial_number(self):
+        return self._serial_number
+
+    @property
     def test_method_obj(self):
         return getattr(self, self._testMethodName)
 
     @property
     def real_test_method_name(self):
         return self._testMethodName
+
+    @property
+    def test_method_settings(self):
+
+        return Test.get_test_marker(self.test_method_obj)
 
     @property
     def _test_method_name(self):
@@ -70,6 +80,54 @@ class AbstractTestCase(unittest.TestCase):
     def __repr__(self):
         return "<%s testMethod=%s>" % \
                (strclass(self.__class__), self._test_method_name)
+
+    def run(self, result=None):
+
+        if result is not None:
+            dm = getattr(result, 'depend_manager', None)
+            # 如果有设置依赖管理器，则运行依赖管理器
+            if dm is not None:
+
+                addFailure = getattr(result, 'addFailure', None)
+
+                # 检查是否有无法解析的依赖
+                missing = dm.get_missing(self)
+                miss_msg = '{} depends on {}, which was not found'.format(self.id(), ", ".join(missing))
+                if missing:
+                    try:
+                        raise self.failureException(miss_msg)
+                    except self.failureException:
+                        exc_info = sys.exc_info()
+                        if addFailure:
+                            addFailure(self, exc_info)
+                    return result
+
+                # 检查是否存在循环依赖
+                clinks = dm.get_cyclic_links(self)
+                printables = []
+                for clink in clinks:
+                    printable = '------>'.join(clink)
+                    printables.append(printable)
+                if clinks:
+                    try:
+                        raise self.failureException('{} Circular dependency: {}'.format(self.id(), ", ".join(printables)))
+                    except self.failureException:
+                        exc_info = sys.exc_info()
+                        if addFailure:
+                            addFailure(self, exc_info)
+                    return result
+
+                # 检查用例所依赖的其他测试用例是否测试通过，如果不通过则不执行该用例并标记结果为失败
+                tresult, msglist = dm.dependent_test_is_pass(self)
+                if not tresult:
+                    try:
+                        raise self.failureException('{} depends on: {}'.format(self.id(), '\n'.join(msglist)))
+                    except self.failureException:
+                        exc_info = sys.exc_info()
+                        if addFailure:
+                            addFailure(self, exc_info)
+                    return result
+        return super().run(result=result)
 
     @classmethod
     def collect_testcases(cls):

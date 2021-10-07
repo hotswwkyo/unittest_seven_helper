@@ -1,11 +1,14 @@
 # unittest_seven_helper
- 基于unittest的测试框架，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
+ 基于unittest开发的测试框架，更友好、更灵活的编写、管理与运行测试，生成更加美观的独立单文件HTML报告。内置参数化测试数据存取方案，省去设计的烦恼，节省更多的时间，从而更快的投入到编写用例阶段。
+ * notes
+    > 为方便使用，已更名为[stest](https://pypi.org/project/stest/)。该版本相当于stest的1.0.0版，后续的更新只会更新到stest
  * 现已支持的功能
     >* 支持命名测试方法且不与方法的doc string（文档字符串）冲突
     >* 支持设置测试方法编写人，修改人，最后修改人以及最后一次修改时间等额外记录信息
-    >* 支持设置测试方法的执行优先级
+    >* 支持设置测试方法的执行顺序
     >* 支持参数化功能
     >* 支持数据驱动测试
+    >* 支持设置用例依赖
     >* 内置参数化数据存取方案(使用excel（xlsx或xls格式）存取和管理维护参数化测试数据，简洁直观，易于修改维护)
     >* 支持生成更加简洁美观且可作为独立文件发送的HTML测试报告
     >    ![](https://github.com/hotswwkyo/unittest_seven_helper/blob/main/img/htmlreport.png)
@@ -215,7 +218,9 @@ pip方式安装
 | ---- | ---- | ---- |
 | author | 字符串 | 用例编写者 |
 | editors | 列表 | 修改者列表 |
-| groups | 列表 | 方法所属的组的列表  --- 用于后续的设置组依赖功能 |
+| dname | 字符串或列表 | 用于给用例起一个用于设置依赖的名称 |
+| depends | 列表 | 用于设置用例依赖，是一个用例依赖列表 |
+| groups | 列表 | 方法所属的组的列表|
 | enabled | 布尔值 | 是否启用执行该测试方法 |
 | priority | 整数 | 测试方法的执行优先级，数值越小执行越靠前 |
 | alway_run | 布尔值 | 如果设置为true，则此测试方法将始终运行，即使它依赖于失败的方法也是如此 --- 该功能暂未实现 |
@@ -226,8 +231,78 @@ pip方式安装
 | last_modifyied_by | 字符串 | 最后修改者 |
 | last_modified_time | 字符串 | 最后一次修改的时间 |
 | enable_default_data_provider | 布尔值 | 是否使用内置数据提供者(SevenDataProvider)，默认值是True，未设置data_provider，且该值为True 才会使用内置数据提供者(SevenDataProvider) |
-| depends_on_groups | 列表 | 此方法所依赖的组列表  --- 该功能暂未实现 |
-| depends_on_methods | 列表 | 此方法所依赖的方法列表  --- 该功能暂未实现 |
+
+## 用例依赖设置
+用例依赖于其它用例成功后执行，如用例所依赖的用例不成功或没有执行，则该用例会被设置为失败。在实际当中，有时会需要用到两个或多个测试用例依赖运行，比如这一种场景：添加和删除设备，如果只有一台设备，那么添加和删除这两个用例就会共用测试数据，就会产生依赖（即：删除设备用例依赖于添加设备用例成功后执行）
+
+* dname和depends参数使用示例
+
+    ```python
+    #!/usr/bin/env python
+    # -*- encoding: utf-8 -*-
+    '''
+    @Author: 思文伟
+    @Date: 2021/09/29
+    '''
+
+    import unittest_seven_helper
+    from unittest_seven_helper import AbstractTestCase
+    from unittest_seven_helper import Test as testcase
+
+
+    class DependTest(AbstractTestCase):
+        """依赖设置测试"""
+        @classmethod
+        def setUpClass(cls):
+            pass
+
+        def setUp(self):
+            pass
+
+        @testcase(priority=1, enabled=True, author='思文伟', description='dtest1', depends=['vnctest.py'])
+        def dtest1(self):
+            """ 用例依赖于vnctest.py模块中的所有用例 """
+
+            pass
+
+        @testcase(priority=2, enabled=True, author='思文伟', description='dtest2', depends=['vnctest.py.LoginTest'])
+        def dtest2(self):
+            """ 用例依赖于vnctest.py模块中LoginTest类的所有用例 """
+
+            pass
+
+        @testcase(priority=2, enabled=True, author='思文伟', description='dtest3', depends=['vnctest.py.LoginTest.login'])
+        def dtest3(self):
+            """ 用例依赖于vnctest.py模块中LoginTest类的login用例 """
+            pass
+
+        @testcase(priority=2, enabled=True, author='思文伟', description='dtest4', dname='four')
+        def dtest4(self):
+            """ 命名用例为 four """
+            pass
+
+        @testcase(priority=2, enabled=True, author='思文伟', description='dtest5', depends=['dtest6'])
+        def dtest5(self):
+            """ 用例依赖于当前类的dtest6用例 """
+            pass
+
+        @testcase(priority=2, enabled=True, author='思文伟', description='dtest6', depends=['four'])
+        def dtest6(self):
+            """ 用例依赖于当前类的命名为four的dtest4用例 """
+            pass
+
+        def tearDown(self):
+            pass
+
+        @classmethod
+        def tearDownClass(cls):
+            pass
+
+
+    if __name__ == '__main__':
+        unittest_seven_helper.main()
+
+    ```
 
 ## 参数化数据提供者(data provider)
 
